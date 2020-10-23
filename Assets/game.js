@@ -28,9 +28,30 @@ var timerEl = document.querySelector("#timer");
 var questionIndex = 0;
 var correctCount = 0;
 
+var intervalID;
+var time = 20;
+
 // Generate function for Quiz, Questions and results 
 
+function endQuiz() {
+    clearInterval(intervalID);
+    document.body.innerHTML = "<h1> Game Over </h1>";
+}
+
+function updateTime() {
+    time--;
+    if (time ===0) {
+        endQuiz();
+    }
+}
+
 function renderQuestion() {
+
+    if (time === 0) {
+        updateTime();
+    }
+
+    intervalID = setInterval(updateTime, 1000)
 
     questionEl.textContent = questions[questionIndex].question;
     optionListEl.innerHTML = "";
@@ -49,17 +70,16 @@ function renderQuestion() {
 
 function nextQuestion() {
     questionIndex++;
-    renderQuestion();
-
-	if (availableQuestions.length === 0) {
-		localStorage.setItem('mostRecentScore', score);
-
-		return window.location.assign('/end.html');
+    if (questionIndex === questions.length) {
+        timer = 0;
     }
+    renderQuestion();
     
 }
 function checkAnswer(event) {
     var target = event.target;
+
+    clearInterval(intervalID);
 
     if (target.matches("li")){
         var selectedChoice = event.target.textContent; 
@@ -70,6 +90,7 @@ function checkAnswer(event) {
         } else {
             correctCount --;
             questionResultEl.textContent = "Wrong";
+            time -= 2;
         }
     }
 
@@ -77,9 +98,10 @@ function checkAnswer(event) {
 
 }
 
+renderQuestion();
 optionListEl.addEventListener("click", checkAnswer);
 
-renderQuestion();
+
 
 // Generate time to countdown the end of quiz 
 
