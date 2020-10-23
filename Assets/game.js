@@ -1,151 +1,86 @@
-const question = document.querySelector('#question');
-const choices = Array.from(document.querySelector('.choice-text'));
-const progressText = document.querySelector('#progressText');
-const scoreText = document.querySelector('#score');
-const progressBarFull = document.querySelector('#progressBarFull');
+// Generate quiz variables 
 
-let currentQuestion = {};
-let acceptingAnswers = true;
-let score = 0;
-let questionCounter = 0;
-let availableQuestions = [];
+var questions = [
+    {
+        question: "How do you write 'Hello World' in an alert box?",
+        choices: ["msg('Hello World')", "msgBox('Hello World');", "alertBox('Hello World');", "alert('Hello World');"],
+        answer: "alert('Hello World');",
+    }, {
+        question: "How to empty an array in JavaScript?",
+        choices: ["arrayList[]", "arrayList(0)", "arrayList.length=0", "arrayList.len(0)"],
+        answer: "arrayList.length=0",
+    }, {
+        question: "What function to add an element at the begining of an array and one at the end?",
+        choices: ["push,unshift", "unshift,push", "first,push", "unshift,last"],
+        answer: "unshift,push",
+    }, {
+        question: "What will this output? var a = [1, 2, 3]; console.log(a[6]);",
+        choices: ["undefined", "0", "prints nothing", "Syntax error"],
+        answer: "undefined",
+    }
+];
 
-let questions = [{
-  question: "How do you write 'Hello World' in an alert box?",
-  choice1: "msg('Hello World')",
-  choice2: "msgBox('Hello World');",
-  choice3: "alertBox('Hello World');",
-  choice4: "alert('Hello World');",
-  answer: 3,
-}, {
-  question: "How to empty an array in JavaScript?",
-  choice1: "arrayList[]",
-  choice2: "arrayList(0)",
-  choice3: "arrayList.length=0",
-  choice4: "arrayList.len(0)",
-  answer: 2,
-}, {
-  question: "What function to add an element at the begining of an array and one at the end?",
-  choice1: "push,unshift",
-  choice2: "unshift,push",
-  choice3: "first,push",
-  choice4: "unshift,last",
-  answer: 1,
-}, {
-  question: "What will this output? var a = [1, 2, 3]; console.log(a[6]);",
-  choice1: "undefined",
-  choice2: "0",
-  choice3: "prints nothing",
-  choice4: "Syntax error",
-  answer: 0,
-}, {
-  question: "What would following code return? console.log(typeof typeof 1);",
-  choice1: "string",
-  choice2: "number",
-  choice3: "Syntax error",
-  choice4: "undefined",
-  answer: 0,
-}, {
-  question: "Which software company developed JavaScript?",
-  choice1: "Mozilla",
-  choice2: "Netscape",
-  choice3: "Sun Microsystems",
-  choice4: "Oracle",
-  answer: 1,
-}, {
-  question: "What would be the result of 3+2+'7'?",
-  choice1: "327",
-  choice2: "12",
-  choice3: "14",
-  choice4: "57",
-  answer: 3,
-}, {
-  question: "Look at the following selector: $('div'). What does it select?",
-  choice1: "The first div element",
-  choice2: "The last div element",
-  choice3: "All div elements",
-  choice4: "Current div element",
-  answer: 2,
-}, {
-  question: "How can a value be appended to an array?",
-  choices: "arr(length).value;",
-  choice2: "arr[arr.length]=value;",
-  choice3: "arr[]=add(value);",
-  choice4: "None of these",
-  answer: 1
-}, {
-  question: "What will the code below output to the console? console.log(1 +  +'2' + '2');",
-  choice1: "'32'",
-  choice2: "'122'",
-  choice3: "'13'",
-  choice4: "'14'",
-  answer: 0,
-}]
+var questionEl = document.querySelector("#question");
+var optionListEl = document.querySelector("#option-list");
+var questionResultEl = document.querySelector("#question-result");
+var timerEl = document.querySelector("#timer");
 
-const SCORE_POINTS = 1;
-const MAX_QUESTIONS = 10;
+var questionIndex = 0;
+var correctCount = 0;
 
-startGame = () => {
-  questionCounter = 0;
-  score = 0;
-  availableQuestions = [...questions]
-  getNewQuestion()
-}
+// Generate function for Quiz, Questions and results 
 
-getNewQuestion = () => {
-  if (availableQuestions.length === 0 || questionCounter > MAX_QUESTIONS) {
-    localStorage.setItem('mostRecentScore', score)
+function renderQuestion() {
 
-    return window.location.assign('/highscores.html');
-  }
+    questionEl.textContent = questions[questionIndex].question;
+    optionListEl.innerHTML = "";
+    questionResultEl.innerHTML = "";
 
-  questionCounter++
-  progressText.innerText = `question ${questionCounter} of ${MAX_QUESTIONS}`,
-  progressBarFull.style.width = `${(questionCounter/MAX_QUESTIONS) * 100}%`
+    var choices = questions[questionIndex].choices;
+    var choicesLength = choices.length;
 
-  const questionsIndex = Math.floor(Math.random() * availableQuestions.length)
-  currentQuestion = availableQuestions[questionsIndex]
-  question.innerText = currentQuestion.question
-
-  choices.forEach(choice => {
-    const number = choice.dataset['number']
-    choice.innerText = currentQuestion['choice' + number]
-  })
-  availableQuestions.splice(questionsIndex, 1);
-
-  acceptingAnswers = true;
-}
-
-choices.forEach(choice => {
-  choice.addEventlistener('click', e => {
-    if (!acceptingAnswers) return
-
-    acceptingAnswers = false
-    const selectedChoice = e.target
-    const selectedAnswer = selectChoice.dataset['number']
-
-    let classToApply = selectedAnswer == currentQuestion.answer ? 'correct' : 'incorrect'
-
-    if (classToApply === 'correct') {
-      incrementScore(SCORE_POINTS)
+    for (var i = 0; i<choicesLength; i++) {
+        var questionListItem = document.createElement("li");
+        questionListItem.textContent = choices[i];
+        optionListEl.append(questionListItem);
     }
 
-    selectedChoice.parentElement.classList.add(classToApply)
-
-    setTimeout(() => {
-      selectedChoice.parentElement.classList.remove(classToApply)
-      getNewQuestion()
-    }, 1000)
-  })
-})
-
-incrementScore = num => {
-  score += num
-  scoreText.innerText = score
 }
 
-startGame()
+function nextQuestion() {
+    questionIndex++;
+    renderQuestion();
 
+	if (availableQuestions.length === 0) {
+		localStorage.setItem('mostRecentScore', score);
 
+		return window.location.assign('/end.html');
+    }
+    
+}
+function checkAnswer(event) {
+    var target = event.target;
 
+    if (target.matches("li")){
+        var selectedChoice = event.target.textContent; 
 
+        if(selectedChoice === questions[questionIndex].answer) {
+            correctCount++;
+            questionResultEl.textContent = "Correct";
+        } else {
+            correctCount --;
+            questionResultEl.textContent = "Wrong";
+        }
+    }
+
+    setTimeout (nextQuestion, 2000);
+
+}
+
+optionListEl.addEventListener("click", checkAnswer);
+
+renderQuestion();
+
+// Generate time to countdown the end of quiz 
+
+// Generate local storage for HIghScore

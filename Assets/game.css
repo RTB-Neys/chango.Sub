@@ -2,14 +2,21 @@ body{
     color: blanchedalmond;
 }
 
+#container {
+    : ;
+    margin-bottom: 1rem;
+    width:50%;
+    border-radius: 4px;
+}
+
 .choice-container {
     display: flex;
     background: rgb(30, 30, 117);
     font-size: 3rem;
-    margin-bottom: 1rem;
-    width:50%;
+    margin-bottom: 5px;
+    width:25%;
     border-radius: 4px;
-    min-width: 80rem;
+    min-width: 25rem;
 }
 
 .choice-container:hover {
@@ -37,34 +44,6 @@ body{
     background: linear-gradient(32deg, rgb(173, 11, 11) 0%, rgb(235, 38, 38) 100%);
 }
 
-#hud {
-    display: flex;
-    justify-content: space-between;
-}
-
-.hud-prefix {
-    text-align: center;
-    font-size: 2rem;
-}
-
-.hud-main-text {
-    text-align: center;
-}
-
-#progressBar {
-    width: 20rem;
-    height: 3rem;
-    border: 0.2rem solid rgb(7, 70, 7);
-    margin-top: 2rem;
-    border-radius: 50px;
-    overflow: hidden;
-}
-
-#progressBarFull {
-    height: 100%;
-    background: rgb(30, 167, 30);
-    width: 0%;
-}
 
 @media screen and (max-width: 768px) {
     .choice-container {
@@ -73,5 +52,9 @@ body{
 }
 
 #question {
-    font-size: 4rem;
+    font-size: 25px;
+}
+
+#option-list {
+    font-size: 20px;
 }
