@@ -27,15 +27,55 @@ var timerEl = document.querySelector("#timer");
 
 var questionIndex = 0;
 var correctCount = 0;
-
-var intervalID;
+var intervalId;
 var time = 20;
 
 // Generate function for Quiz, Questions and results 
 
 function endQuiz() {
-    clearInterval(intervalID);
-    document.body.innerHTML = "<h1> Game Over </h1>";
+    clearInterval(intervalId);
+    var body = document.body;
+    body.innerHTML = "Game Over, You scored" + correctCount;
+
+    setTimeout(showHighScore, 2000);
+}
+
+window.setTimeout(function(){
+    window.location.href = "highscores.html";
+}, 12000);
+
+function showHighScore() {
+    var name = prompt("What is your name?");
+
+    var user = {
+        name: name,
+        score: correctCount
+    };
+
+    var high_score = localStorage.getItem("scores");
+    
+    if (!high_score) {
+        high_score = [];
+    } else {
+        high_score = JSON.parse(high_score);
+    }
+
+    high_score.push(user);
+
+    high_score.sort(function(a, b){
+        return b.score-a.score;
+    });
+
+    contentUl = document.createElement("ul");
+
+    for (var i=0; i< high_score.length; i++) {
+        var contentLi = document.createElement("li");
+        contentLi.textContent = "Name: " + high_score[i].name+ " Score: "+ high_score[i].score;
+        contentUl.append(contentLi);
+    }
+
+    document.body.append(contentUl);
+
 }
 
 function updateTime() {
@@ -51,7 +91,7 @@ function renderQuestion() {
         updateTime();
     }
 
-    intervalID = setInterval(updateTime, 1000)
+    intervalID = setInterval(updateTime, 1000);
 
     questionEl.textContent = questions[questionIndex].question;
     optionListEl.innerHTML = "";
@@ -79,7 +119,7 @@ function nextQuestion() {
 function checkAnswer(event) {
     var target = event.target;
 
-    clearInterval(intervalID);
+    clearInterval(intervalId);
 
     if (target.matches("li")){
         var selectedChoice = event.target.textContent; 
@@ -101,8 +141,3 @@ function checkAnswer(event) {
 renderQuestion();
 optionListEl.addEventListener("click", checkAnswer);
 
-
-
-// Generate time to countdown the end of quiz 
-
-// Generate local storage for HIghScore
